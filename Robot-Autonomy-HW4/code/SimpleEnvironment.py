@@ -100,8 +100,34 @@ class SimpleEnvironment(object):
             # TODO: Here you will construct a set of actions
             #  to be used during the planning process
             #
-         
-            
+            current_config = numpy.asarray(start_config).copy()
+            config_control = []
+            control_footprints = []
+            current_actions = []
+            speed = 1.0
+            duration = 0.5
+
+            #get four possible controls
+
+            #go straight
+            config_control.append(Control(speed,speed,duration))
+            #go back
+            config_control.append(Control(-speed,-speed,duration))
+            #turn right by pi/4 radians
+            config_control.append(Control(speed,-speed,numpy.pi/4.0))
+            #turn left by pi/4 radians
+            config_control.append(Control(-speed,speed,numpy.pi/4.0))
+
+            #get the corresponding footprints for each control
+            for c in config_control:
+                control_footprints.append(self.GenerateFootprintFromControl(current_config,c))
+
+            #create the corresponding actions
+            for i in range(len(config_control)):
+                current_actions.append(config_control[i],control_footprints[i])
+
+            self.actions[idx] = current_actions
+
 
     def GetSuccessors(self, node_id):
 
