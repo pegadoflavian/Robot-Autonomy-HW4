@@ -51,8 +51,8 @@ class DiscreteEnvironment(object):
         #
         coord = [0] * self.dimension
 
-        for idx in range(self.dimension):
-            coord[idx] = numpy.floor((config[idx] - self.lower_limits[idx])/self.resolution)
+        for i in range(self.dimension):
+            coord[i] = (config[i]-self.lower_limits[i])//self.resolution[i]
 
         return coord
 
@@ -64,10 +64,8 @@ class DiscreteEnvironment(object):
         #
         config = [0] * self.dimension
 
-        for idx in range(self.dimension):
-            #need to check if logic needs to be in place if the lower limit lines up improperly with the resolution
-            config[idx] = round((coord[idx]*self.resolution)+(self.resolution/2.0)+self.lower_limits[idx], 4) 
-        # print config
+        for i in range(self.dimension):
+            config[i] = (coord[i]+.5)*self.resolution[i]+self.lower_limits[i]
         return config
 
     def GridCoordToNodeId(self,coord):
