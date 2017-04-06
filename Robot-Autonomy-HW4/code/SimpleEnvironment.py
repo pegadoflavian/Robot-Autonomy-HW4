@@ -136,8 +136,6 @@ class SimpleEnvironment(object):
         #  up the configuration associated with the particular node_id
         #  and return a list of node_ids and controls that represent the neighboring
         #  nodes
-#<<<<<<< HEAD
-
         grid_idx = self.discrete_env.NodeIdToGridCoord(node_id)
         current_config = self.discrete_env.NodeIdToConfiguration(node_id)
         current_config = numpy.asarray(current_config)
@@ -168,65 +166,7 @@ class SimpleEnvironment(object):
 
             print "ok"
         return successors
-        '''
-=======
->>>>>>> 3325f6b1bfa6338d664b2aad47cbf4561a9f7b7e
-        coordinate = self.discrete_env.NodeIdToGridCoord(node_id)
-        start_config = self.discrete_env.NodeIdToConfiguration(node_id)
-        idx = coordinate[2]
-        action = self.actions[idx]
-        print 'test'
-        for act in action:
-            flag= False
-            id_list = []
-            #add_foot_print
-<<<<<<< HEAD
-            for delta in act.footprint:
-                tmp_ori=delta[2]
-                cur_config = delta+ start_config
-=======
-            for delta in action.footprint:
-                tmp_ori=delta[2]
-                cur_config= delta.copy()+ start_config.copy()
->>>>>>> 3325f6b1bfa6338d664b2aad47cbf4561a9f7b7e
-                cur_config[2] = tmp_ori
-                id_list.append(self.discrete_env.ConfigurationToNodeId(cur_config))
-            id_list = list(set(id_list))
-                        
-            for each_id in id_list:
-<<<<<<< HEAD
-                cur_config = self.discrete_env.NodeIdToConfiguration(each_id)
-=======
-                cur_config = self.discrete_env.NodeIdToConfiguration(each_id).copy()
->>>>>>> 3325f6b1bfa6338d664b2aad47cbf4561a9f7b7e
-                flag_1 = self.robot_collision_check(cur_config)
-                #check collision
-                if flag_1==True:
-                    flag=True
-                    break
-                #check whether the robot is in the boundary
-                flag_2 = self.boundary_check(cur_config)
-                if flag_2==False:
-                    flag=True
-                    break
-            if flag==True:
-                continue
-<<<<<<< HEAD
-            cur_config = act.footprint[-1] + start_config
-            cur_config[2] = delta[2]
-            if node_id == self.discrete_env.ConfigurationToNodeId(cur_config):
-                continue
-            successors.append([self.discrete_env.ConfigurationToNodeId(cur_config), 
-=======
-            cur_config = act.footprint[-1].copy() + start_config.copy()
-            cur_config[2] = delta[2].copy()
-            if node_id == self.discrete_env.ConfigurationToNodeId(xconfig):
-                continue
-            successors.append([self.discrete_env.ConfigurationToNodeId(cur_config.copy()), 
->>>>>>> 3325f6b1bfa6338d664b2aad47cbf4561a9f7b7e
-                          act])
-        return successors
-        '''
+        
     def CheckCollision(self, point):
         T = self.robot.GetTransform()
         temp = T.copy()
