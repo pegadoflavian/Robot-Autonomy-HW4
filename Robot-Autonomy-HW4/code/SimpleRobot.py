@@ -33,9 +33,12 @@ class SimpleRobot(object):
         offset = None
         for action in traj:
             config = self.GetCurrentConfiguration()
+            #print action.footprint
 
             for fconfig in action.footprint:
-                new_config = fconfig.copy()
+                #print fconfig
+                new_config = numpy.asarray(fconfig).copy()
+                #print "config", fconfig
                 new_config[:2] += config[:2]
                 self.SetCurrentConfiguration(new_config)
                 time.sleep(0.001)
