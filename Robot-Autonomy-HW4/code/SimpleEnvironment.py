@@ -141,43 +141,42 @@ class SimpleEnvironment(object):
         #  up the configuration associated with the particular node_id
         #  and return a list of node_ids and controls that represent the neighboring
         #  nodes
-        '''
-        grid=self.discrete_env.NodeIdToGridCoord(node_id)
-        
-        for i in range(0,self.discrete_env.dimension):
-            #newCoord=grid[:]
-            print "newCoord"
-            print grid
-
-            # Surbtaction neighbor
-            grid[i] = grid[i]+1
-            print "g1"
-            print grid
-            newNode = self.discrete_env.GridCoordToNodeId(grid)
-            print "node"
-            print newNode
-            if (self.IsCollision(newNode )==False  and self.IsBoundary(newNode)==True):
-                successors.append(newNode )
-
-            # Addition Neighbor
-            grid[i] = grid[i]-2
-            print "g2"
-            print grid
-            print "node"
-            print newNode
-            newNode  = self.discrete_env.GridCoordToNodeId(grid)
-            if (not self.IsCollision(newNode)  and self.IsBoundary(newNode)):
-                successors.append(newNode )
-            grid[i]=grid[i]+1
-        
-        grid_idx = self.discrete_env.NodeIdToGridCoord(node_id)
-        current_config = self.discrete_env.NodeIdToConfiguration(node_id)
-        current_config = numpy.asarray(current_config)
-
-        orientation = grid_idx[2]
-
-        curAction = self.actions[orientation]
-        '''
+        coordinate = self.discrete_env.NodeIdToGridCoord(node_id)
+        start_config = self.discrete_env.NodeIdToConfiguration(node_id)
+        idx = coordinate[2]
+        action = self.actions[idx]
+        print 'test'
+        for act in action:
+            flag= False
+            id_list = []
+            #add_foot_print
+            for delta in action.footprint:
+                tmp_ori=delta[2]
+                cur_config= delta.copy()+ start_config.copy()
+                cur_config[2] = tmp_ori
+                id_list.append(self.discrete_env.ConfigurationToNodeId(cur_config))
+            id_list = list(set(id_list))
+                        
+            for each_id in id_list:
+                cur_config = self.discrete_env.NodeIdToConfiguration(each_id).copy()
+                flag_1 = self.robot_collision_check(cur_config)
+                #check collision
+                if flag_1==True:
+                    flag=True
+                    break
+                #check whether the robot is in the boundary
+                flag_2 = self.boundary_check(cur_config)
+                if flag_2==False:
+                    flag=True
+                    break
+            if flag==True:
+                continue
+            cur_config = act.footprint[-1].copy() + start_config.copy()
+            cur_config[2] = delta[2].copy()
+            if node_id == self.discrete_env.ConfigurationToNodeId(xconfig):
+                continue
+            successors.append([self.discrete_env.ConfigurationToNodeId(cur_config.copy()), 
+                          act])
         return successors
         
 
@@ -205,4 +204,23 @@ class SimpleEnvironment(object):
         
         
         return cost
+    def boundary_check(self, config):
+        coords = self.discrete_env.ConfigurationToGridCoord(config)
+        if (np.all(coords >= np.array([0]*self.discrete_env.dimension))) and \
+               (np.all(coords <  np.array(self.discrete_env.num_cells))):
+            return True
+        else:
+            return False
+    def robot_collision_check(self, config):
+
+        tmp = config.copy()
+        
+        with self.robot.GetEnv():
+            cfg = self.herb.GetCurrentConfiguration()
+            self.herb.SetCurrentConfiguration(tmp)
+            col_env= self.robot.GetEnv().CheckCollision(self.robot)
+            col_self = self.robot.CheckSelfCollision()
+        if (col_env or col_self):
+            return True
+        return False
 
