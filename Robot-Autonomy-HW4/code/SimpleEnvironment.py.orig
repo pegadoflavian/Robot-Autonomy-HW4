@@ -136,7 +136,7 @@ class SimpleEnvironment(object):
         #  up the configuration associated with the particular node_id
         #  and return a list of node_ids and controls that represent the neighboring
         #  nodes
-#<<<<<<< HEAD
+<<<<<<< HEAD
 
         grid_idx = self.discrete_env.NodeIdToGridCoord(node_id)
         current_config = self.discrete_env.NodeIdToConfiguration(node_id)
