@@ -17,7 +17,7 @@ if __name__ == "__main__":
                         help='The test to run')
     parser.add_argument('--hres', type=float, default=0.1,
                         help='xy resolution')
-    parser.add_argument('--tres', type=float, default=numpy.pi/8.,
+    parser.add_argument('--tres', type=float, default=numpy.pi/4.,
                         help='angular resolution')
     parser.add_argument('-m', '--manip', type=str,
                         help='The manipulator to grasp the bottle with (right or left)')
@@ -108,6 +108,7 @@ if __name__ == "__main__":
     bottle.SetTransform(bottle_transform)
  
     planner = GraspPlanner(herb.robot, base_planner, arm_planner)
+
     planner.PlanToGrasp(bottle)
 
     import IPython

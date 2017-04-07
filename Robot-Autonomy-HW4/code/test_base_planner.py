@@ -62,7 +62,8 @@ if __name__ == "__main__":
     hgoal.SetShow(True)
 
     herb_base.SetCurrentConfiguration(start_config)
-
+    start_config = [-1.049, 0.65, 0.39]
+    goal_config = [-0.18241116 , 0.06303335, -0.84666128]
     planner = AStarPlanner(base_env, visualize=False)
     plan = planner.Plan(start_config, goal_config)
     traj = herb_base.ConvertPlanToTrajectory(plan)
