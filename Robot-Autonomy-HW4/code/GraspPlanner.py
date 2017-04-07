@@ -64,13 +64,15 @@ class GraspPlanner(object):
 				Tgrasp,pose,values = goal
 				self.robot.SetTransform(pose)
 				self.robot.SetDOFValues(values)
-				if ind == 1:
+				if ind == 0:
 					our_pose = pose
+					our_pose = np.array(self.base_planner.planning_env.herb.GetCurrentConfiguration())
 					our_grasp_config = values
 
 
 
 			base_pose = our_pose
+
 			grasp_config = our_grasp_config
 			###################################################################
 			# TODO: Here you will fill in the function to compute
@@ -81,34 +83,43 @@ class GraspPlanner(object):
 
 			return base_pose, grasp_config
 
-		# def PlanToGrasp(self, obj):
+		def PlanToGrasp(self, obj):
 
-		# 		# Next select a pose for the base and an associated ik for the arm
-		# 		base_pose, grasp_config = self.GetBasePoseForObjectGrasp(obj)
+				# Next select a pose for the base and an associated ik for the arm
+				base_pose, grasp_config = self.GetBasePoseForObjectGrasp(obj)
 
-		# 		if base_pose is None or grasp_config is None:
-		# 				print 'Failed to find solution'
-		# 				exit()
+				if base_pose is None or grasp_config is None:
+						print 'Failed to find solution'
+						exit()
 
-		# 		# Now plan to the base pose
-		# 		start_pose = np.array(self.base_planner.planning_env.herb.GetCurrentConfiguration())
-		# 		base_plan = self.base_planner.Plan(start_pose, base_pose)
-		# 		base_traj = self.base_planner.planning_env.herb.ConvertPlanToTrajectory(base_plan)
+				# Now plan to the base pose
+				start_pose = np.array(self.base_planner.planning_env.herb.GetCurrentConfiguration())
+				start_pose = [-1.049 , 0.65 , 0.39]
+				print("start pose is")
+				print start_pose
+				raw_input("press enter to continue")
+				print("base_pose is")
+				print(base_pose)
+				raw_input("press enter to continue")
+				base_plan = self.base_planner.Plan(start_pose, base_pose)
+				raw_input("we now have the base_plan, now we will run it")
+				base_traj = self.base_planner.planning_env.herb.ConvertPlanToTrajectory(base_plan)
 
-		# 		print 'Executing base trajectory'
-		# 		self.base_planner.planning_env.herb.ExecuteTrajectory(base_traj)
+				print 'Executing base trajectory'
+				self.base_planner.planning_env.herb.ExecuteTrajectory(base_traj)
 
-		# 		# Now plan the arm to the grasp configuration
-		# 		start_config = np.array(self.arm_planner.planning_env.herb.GetCurrentConfiguration())
-		# 		arm_plan = self.arm_planner.Plan(start_config, grasp_config)
-		# 		arm_traj = self.arm_planner.planning_env.herb.ConvertPlanToTrajectory(arm_plan)
+				raw_input("This is the point before we move to grasp config")
+				# Now plan the arm to the grasp configuration
+				start_config = np.array(self.arm_planner.planning_env.herb.GetCurrentConfiguration())
+				arm_plan = self.arm_planner.Plan(start_config, grasp_config)
+				arm_traj = self.arm_planner.planning_env.herb.ConvertPlanToTrajectory(arm_plan)
 
-		# 		print 'Executing arm trajectory'
-		# 		self.arm_planner.planning_env.herb.ExecuteTrajectory(arm_traj)
+				print 'Executing arm trajectory'
+				self.arm_planner.planning_env.herb.ExecuteTrajectory(arm_traj)
 
-		# 		# Grasp the bottle
-		# 		task_manipulation = openravepy.interfaces.TaskManipulation(self.robot)
-		# 		task_manipultion.CloseFingers()
+				# Grasp the bottle
+				task_manipulation = openravepy.interfaces.TaskManipulation(self.robot)
+				task_manipultion.CloseFingers()
 		# def problem_init(self):
 			
 		# 	self.target_kinbody = self.env.ReadKinBodyURI('models/objects/fuze_bottle.iv')
