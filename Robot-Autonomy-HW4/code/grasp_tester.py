@@ -1,6 +1,14 @@
 #!/usr/bin/env python
 
-import argparse, numpy, openravepy, time
+import argparse, openravepy, time
+
+import os
+import copy
+import math
+import numpy as np
+np.random.seed(0)
+import scipy
+
 
 from HerbRobot import HerbRobot
 from HerbEnvironment import HerbEnvironment
@@ -8,8 +16,6 @@ from SimpleRobot import SimpleRobot
 from SimpleEnvironment import SimpleEnvironment
 from GraspPlanner import GraspPlanner
 from AStarPlanner import AStarPlanner
-from RRTConnectPlannerv3 import RRTConnectPlanner
-
 # TODO: Import the applicable RRTPlanner
 
 if __name__ == "__main__":
@@ -19,7 +25,7 @@ if __name__ == "__main__":
                         help='The test to run')
     parser.add_argument('--hres', type=float, default=0.1,
                         help='xy resolution')
-    parser.add_argument('--tres', type=float, default=numpy.pi/4.,
+    parser.add_argument('--tres', type=float, default=np.pi/8.,
                         help='angular resolution')
     parser.add_argument('-m', '--manip', type=str,
                         help='The manipulator to grasp the bottle with (right or left)')
@@ -42,10 +48,10 @@ if __name__ == "__main__":
     # Load HERB into it
     robot = env.ReadRobotXMLFile('models/robots/herb2_padded.robot.xml')
     env.Add(robot)
-        
-    theta = -numpy.pi/4.
-    robot_pose = numpy.array([[numpy.cos(theta), -numpy.sin(theta), 0, -1.25],
-                              [numpy.sin(theta),  numpy.cos(theta), 0,  0.82],
+
+    theta = -np.pi/4.
+    robot_pose = np.array([[np.cos(theta), -np.sin(theta), 0, -1.25],
+                              [np.sin(theta),  np.cos(theta), 0,  0.82],
                               [0.              ,  0.              , 1,  0.  ],
                               [0.              ,  0.              , 0,  1.  ]])
     robot.SetTransform(robot_pose)
@@ -77,15 +83,16 @@ if __name__ == "__main__":
     herb_base = SimpleRobot(env, robot)
     base_env = SimpleEnvironment(herb_base, resolution)
 
-    base_planner = AStarPlanner(base_env, visualize = False)
+    #base_planner = AStarPlanner(base_env, visualize = False)
+    base_planner = None
     arm_planner = None
     # TODO: Here initialize your arm planner
-    arm_planner = RRTConnectPlanner(arm_env, visualize = False)
+  
     # add a table and move the robot into place
     table = env.ReadKinBodyXMLFile('models/objects/table.kinbody.xml')
     env.Add(table)
     
-    table_pose = numpy.array([[ 0, 0, -1, 0.7], 
+    table_pose = np.array([[ 0, 0, -1, 0.7], 
                               [-1, 0,  0, 0], 
                               [ 0, 1,  0, 0], 
                               [ 0, 0,  0, 1]])
@@ -110,8 +117,10 @@ if __name__ == "__main__":
     bottle.SetTransform(bottle_transform)
  
     planner = GraspPlanner(herb.robot, base_planner, arm_planner)
+    planner.GetBasePoseForObjectGrasp(bottle)
 
-    planner.PlanToGrasp(bottle)
+
+
 
     import IPython
     IPython.embed()

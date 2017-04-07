@@ -5,7 +5,7 @@ import copy
 import time
 import math
 import numpy as np
-np.random.seed(0)
+np.random.seed(0) 
 import scipy
 
 class GraspPlanner(object):
@@ -67,7 +67,8 @@ class GraspPlanner(object):
                 if ind == 0:
                     our_pose = pose
                     our_pose = np.array(self.base_planner.planning_env.herb.GetCurrentConfiguration())
-                    our_grasp_config = values
+                    our_grasp_config = np.array(self.arm_planner.planning_env.herb.GetCurrentConfiguration())
+                    #our_grasp_config = values
 
 
 
@@ -122,6 +123,8 @@ class GraspPlanner(object):
                 raw_input("This is the point before we move to grasp config")
                 # Now plan the arm to the grasp configuration
                 start_config = np.array(self.arm_planner.planning_env.herb.GetCurrentConfiguration())
+                print(start_config)
+                raw_input("pause point to see start config above")
                 arm_plan = self.arm_planner.Plan(start_config, grasp_config)
                 arm_traj = self.arm_planner.planning_env.herb.ConvertPlanToTrajectory(arm_plan)
 
