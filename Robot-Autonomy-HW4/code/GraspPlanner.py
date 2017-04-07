@@ -119,6 +119,8 @@ class GraspPlanner(object):
 
                 print 'Executing base trajectory'
                 self.base_planner.planning_env.herb.ExecuteTrajectory(base_traj)
+                #snap to grid
+                self.base_planner.planning_env.herb.SetCurrentConfiguration(base_pose)
 
                 raw_input("This is the point before we move to grasp config")
                 # Now plan the arm to the grasp configuration

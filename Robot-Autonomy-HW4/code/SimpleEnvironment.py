@@ -186,6 +186,8 @@ class SimpleEnvironment(object):
         dist = 0
         start_config = numpy.array(self.discrete_env.NodeIdToConfiguration(start_id))
         goal_config = numpy.array(self.discrete_env.NodeIdToConfiguration(end_id))
+        start_config[2] = 0
+        goal_config[2] = 0
         dist = numpy.linalg.norm(goal_config - start_config)
         # TODO: Here you will implement a function that 
         # computes the distance between the configurations given
