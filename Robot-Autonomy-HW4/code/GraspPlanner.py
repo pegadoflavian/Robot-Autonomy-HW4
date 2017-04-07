@@ -23,12 +23,49 @@ class GraspPlanner(object):
 			# Load grasp database
 			self.gmodel = openravepy.databases.grasping.GraspingModel(self.robot, obj)
 			if not self.gmodel.load():
-					self.gmodel.autogenerate()
-			print "this is working"
+				self.gmodel.autogenerate()
 			self.graspindices = self.gmodel.graspindices
 			self.grasps = self.gmodel.grasps
 			self.order_grasps()
-			self.show_grasp(self.grasps_ordered[-1])
+			# self.show_grasp(self.grasps_ordered[-1])
+			Tgrasp = self.gmodel.getGlobalGraspTransform(self.grasps_ordered[-1],collisionfree=True)
+			print Tgrasp
+			print type(Tgrasp)
+			self.irmodel = openravepy.databases.inversereachability.InverseReachabilityModel(robot=self.robot)
+			# if not self.irmodel.load():
+				# self.irmodel.autogenerate()
+			densityfn,samplerfn,bounds = self.irmodel.computeBaseDistribution(Tgrasp)
+
+			# goals = []
+			# numfailures = 0
+			# starttime = time.time()
+			# timeout = inf
+			# with self.robot:
+			# 	while len(goals) < N:
+			# 		if time.time()-starttime > timeout:
+			# 			break
+			# 		poses,jointstate = samplerfn(N-len(goals))
+			# 		for pose in poses:
+			# 			self.robot.SetTransform(pose)
+			# 			self.robot.SetDOFValues(*jointstate)
+			# 			# validate that base is not in collision
+			# 			if not self.manip.CheckIndependentCollision(CollisionReport()):
+			# 				q = self.manip.FindIKSolution(Tgrasp,filteroptions=IkFilterOptions.CheckEnvCollisions)
+			# 				if q is not None:
+			# 					values = self.robot.GetDOFValues()
+			# 					values[self.manip.GetArmIndices()] = q
+			# 					goals.append((Tgrasp,pose,values))
+			# 				elif self.manip.FindIKSolution(Tgrasp,0) is None:
+			# 					numfailures += 1
+			# print 'showing %d results'%N
+			# for ind,goal in enumerate(goals):
+			# 	raw_input('press ENTER to show goal %d'%ind)
+			# 	Tgrasp,pose,values = goal
+			# 	self.robot.SetTransform(pose)
+			# 	self.robot.SetDOFValues(values)
+
+
+
 			base_pose = None
 			grasp_config = None
 			###################################################################
