@@ -110,7 +110,7 @@ if __name__ == "__main__":
     bottle.SetTransform(bottle_transform)
  
     planner = GraspPlanner(herb.robot, base_planner, arm_planner)
-
+    #raw_input("we have initialized planner, now planning to bottle")
     planner.PlanToGrasp(bottle)
 
     import IPython

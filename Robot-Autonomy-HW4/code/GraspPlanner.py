@@ -28,8 +28,9 @@ class GraspPlanner(object):
             self.grasps = self.gmodel.grasps
             self.order_grasps()
             # self.show_grasp(self.grasps_ordered[-1])
-            ipdb.set_trace()
-            Tgrasp = self.gmodel.getGlobalGraspTransform(self.grasps_ordered[-1],collisionfree=True)
+            #10 is direct from outside table, not bad, -35 also not bad
+            #ipdb.set_trace()
+            Tgrasp = self.gmodel.getGlobalGraspTransform(self.grasps_ordered[-34],collisionfree=True)
             print Tgrasp
             print type(Tgrasp)
             self.irmodel = openravepy.databases.inversereachability.InverseReachabilityModel(robot=self.robot)
@@ -65,7 +66,7 @@ class GraspPlanner(object):
                 Tgrasp,pose,values = goal
                 self.robot.SetTransform(pose)
                 self.robot.SetDOFValues(values)
-                if ind == 11:
+                if ind == 3:
                     our_pose = pose
                     our_pose = np.array(self.base_planner.planning_env.herb.GetCurrentConfiguration())
                     our_grasp_config = np.array(self.arm_planner.planning_env.herb.GetCurrentConfiguration())
@@ -129,7 +130,7 @@ class GraspPlanner(object):
                 print(start_config)
                 print(grasp_config)
                 raw_input("pause point to see start config above")
-                ipdb.set_trace()
+                #ipdb.set_trace()
                 arm_plan = self.arm_planner.Plan(start_config, grasp_config)
                 arm_traj = self.arm_planner.planning_env.herb.ConvertPlanToTrajectory(arm_plan)
 
@@ -138,7 +139,7 @@ class GraspPlanner(object):
 
                 # Grasp the bottle
                 task_manipulation = openravepy.interfaces.TaskManipulation(self.robot)
-                task_manipultion.CloseFingers()
+                task_manipulation.CloseFingers()
         # def problem_init(self):
             
         #   self.target_kinbody = self.env.ReadKinBodyURI('models/objects/fuze_bottle.iv')
