@@ -36,29 +36,40 @@ class AStarPlanner(object):
 
         goal_id = self.planning_env.discrete_env.ConfigurationToNodeId(goal_config)
         self.open.setGoal(goal_id)
+        goal_node = Node(0,None,0,goal_id,None)
         suc_node = start_node
         self.close.addNode(start_node.id)
         count = 0
+        prev_dist_to_goal = 1000
+        flag_almost_there  =False
         while (self.open.isEmpty() == False):
             #import IPython
             #IPython.embed()
             curr = self.open.getlowest()
+            dist_to_goal = self.planning_env.ComputeDistance(curr.id,goal_id)
+            print dist_to_goal
             if(curr.parent != None):
                 cur_config = np.array(self.planning_env.discrete_env.NodeIdToConfiguration(curr.id))
                 parent_config = np.array(self.planning_env.discrete_env.NodeIdToConfiguration(curr.parent.id))
                 self.planning_env.PlotEdge(cur_config,parent_config)
             count = count + 1
             #curr = self.open.getlowest()
-            if curr.id == goal_id:
+            if not flag_almost_there and (dist_to_goal == 0.0):
+                flag_almost_there = True
+            if (curr.id == goal_id):# or (dist_to_goal == 0.0):
                 suc_node = curr
                 print 'bye bye'
                 break
-
+            elif flag_almost_there and (dist_to_goal > 0.0):
+                print "error increased"
+                suc_node = curr
+                break
+            prev_dist_to_goal = dist_to_goal
             successors = self.planning_env.GetSuccessors(curr.id)
 
             for i in range(0, len(successors)):
                 if (self.close.isDuplicate(successors[i][0]) == False):
-                    print 'got here'
+                    #print 'got here'
                     newnode = Node(curr.cost+successors[i][1].control.dt,curr,curr.depth+1, successors[i][0],successors[i][1])#Action(successors[i][1].control,successors[i][1].footprint))
                     self.open.addNode(newnode)
                     self.close.addNode(successors[i][0])
@@ -79,6 +90,7 @@ class AStarPlanner(object):
         self.planning_env.robot.SetTransform(transform)
         #plan.append(Action(node_control_mapping[str(self.planning_env.discrete_env.ConfigurationToNodeId(goal_config))],goal_config))
         #plan.append(Action([0,0,0],np.asarray([goal_config])))
+        print plan
         return plan
 
 
