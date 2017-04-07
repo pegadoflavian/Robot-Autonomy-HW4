@@ -1,5 +1,5 @@
 import logging, openravepy
-
+import ipdb
 import os
 import copy
 import time
@@ -28,6 +28,7 @@ class GraspPlanner(object):
             self.grasps = self.gmodel.grasps
             self.order_grasps()
             # self.show_grasp(self.grasps_ordered[-1])
+            ipdb.set_trace()
             Tgrasp = self.gmodel.getGlobalGraspTransform(self.grasps_ordered[-1],collisionfree=True)
             print Tgrasp
             print type(Tgrasp)
@@ -64,7 +65,7 @@ class GraspPlanner(object):
                 Tgrasp,pose,values = goal
                 self.robot.SetTransform(pose)
                 self.robot.SetDOFValues(values)
-                if ind == 0:
+                if ind == 11:
                     our_pose = pose
                     our_pose = np.array(self.base_planner.planning_env.herb.GetCurrentConfiguration())
                     our_grasp_config = np.array(self.arm_planner.planning_env.herb.GetCurrentConfiguration())
@@ -126,7 +127,9 @@ class GraspPlanner(object):
                 # Now plan the arm to the grasp configuration
                 start_config = np.array(self.arm_planner.planning_env.herb.GetCurrentConfiguration())
                 print(start_config)
+                print(grasp_config)
                 raw_input("pause point to see start config above")
+                ipdb.set_trace()
                 arm_plan = self.arm_planner.Plan(start_config, grasp_config)
                 arm_traj = self.arm_planner.planning_env.herb.ConvertPlanToTrajectory(arm_plan)
 

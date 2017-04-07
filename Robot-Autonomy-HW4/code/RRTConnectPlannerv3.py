@@ -51,6 +51,7 @@ class RRTConnectPlanner(object):
         tree.AddEdge(parent_id, new_id)
         if(self.visualize):
             self.planning_env.PlotEdge(tree.vertices[parent_id], cfg)
+        self.planning_env.robot.SetActiveDOFValues(cfg)
         return new_id
 
     def CheckIfOtherTreeConnects(self, testCfg, otherTree, epsilon):
